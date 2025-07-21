@@ -7,6 +7,14 @@ import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import CreateTicket from "./pages/CreateTicket";
+import Tickets from "./pages/Tickets";
+import Companies from "./pages/Companies";
+import Locations from "./pages/Locations";
+import Categories from "./pages/Categories";
+import Assignees from "./pages/Assignees";
+import HODManagement from "./pages/HODManagement";
+import Notifications from "./pages/Notifications";
+import OrgChart from "./pages/OrgChart";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
