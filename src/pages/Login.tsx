@@ -58,17 +58,22 @@ export default function Login() {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user data
-      const empID = "EMP001";
-      localStorage.setItem('empID', empID);
-      localStorage.setItem('userRole', 'admin');
-      
+
+      // Demo auth: OTP email flow; also allow a/a quick login
+      const isQuick = email.trim() === 'a' && otp.trim() === 'a'
+      if (!isQuick && otp.trim().length < 1) throw new Error('Invalid OTP')
+
+      const role = (email.toLowerCase() === 'admin@pel.com' || email.toLowerCase() === 'it@pel.com') ? 'hod' : 'user'
+      const empID = email
+      localStorage.setItem('empID', empID)
+      localStorage.setItem('userRole', role)
+      localStorage.setItem('userEmail', email)
+
       toast({
         title: "Login Successful",
-        description: "Welcome to IT Ticketing System",
+        description: `Welcome to SPOT, ${email}`,
       });
-      
+
       navigate('/');
     } catch (error) {
       toast({

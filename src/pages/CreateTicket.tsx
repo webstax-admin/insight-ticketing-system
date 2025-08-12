@@ -12,6 +12,7 @@ import { CalendarIcon, Upload, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { Masters, createTicket } from "@/lib/store";
 
 export default function CreateTicket() {
   const navigate = useNavigate();
@@ -29,10 +30,10 @@ export default function CreateTicket() {
     attachment: null as File | null
   });
 
-  const departments = ['IT', 'HR', 'Finance', 'Operations', 'Marketing'];
+  const departments = ['IT'];
   const subDepartments = ['Network', 'Hardware', 'Software', 'Security'];
-  const taskLabels = ['Installation', 'Maintenance', 'Troubleshooting', 'Upgrade'];
-  const locations = ['Building A', 'Building B', 'Building C', 'Remote'];
+  const taskLabels = Masters.getCategories().map(c => c.categoryName);
+  const locations = Masters.getLocations().map(l => l.locationName);
   const priorities = ['Low', 'Medium', 'High', 'Critical'];
 
   const handleSubmit = async () => {
@@ -47,15 +48,30 @@ export default function CreateTicket() {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      const t = createTicket({
+        type: 'IT',
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority as any,
+        reporterEmail: localStorage.getItem('userEmail') || 'user@spot',
+        reporterName: 'User',
+        department: formData.department,
+        subDepartment: formData.subDepartment,
+        category: formData.taskLabel,
+        location: formData.location,
+        details: {
+          incidentDate: formData.incidentDate?.toISOString(),
+          incidentTime: formData.incidentTime,
+          attachmentName: formData.attachment?.name,
+        },
+      })
+
       toast({
         title: "Ticket Created",
-        description: "Your ticket has been successfully created",
+        description: `Ticket ${t.ticketNumber} successfully created`,
       });
       
-      navigate('/');
+      navigate(`/ticket/${t.ticketNumber}`);
     } catch (error) {
       toast({
         title: "Error",
@@ -76,7 +92,7 @@ export default function CreateTicket() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Create New Ticket</h1>
+        <h1 className="text-3xl font-bold">Create IT Ticket</h1>
         <p className="text-muted-foreground">Submit a new IT support request</p>
       </div>
 

@@ -34,42 +34,23 @@ interface Ticket {
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('assignedToMe');
-  const [stats, setStats] = useState<TicketStats>({
-    total: 45,
-    open: 12,
-    inProgress: 18,
-    resolved: 10,
-    closed: 5
-  });
-  const [tickets, setTickets] = useState<Ticket[]>([
-    {
-      ticketNumber: "TK-2024-001",
-      title: "Network connectivity issue in Building A",
-      priority: "High",
-      status: "In Progress",
-      assignee: "John Smith",
-      createdDate: "2024-01-15",
-      department: "IT"
-    },
-    {
-      ticketNumber: "TK-2024-002", 
-      title: "Software installation request",
-      priority: "Medium",
-      status: "Open",
-      assignee: "Jane Doe",
-      createdDate: "2024-01-14",
-      department: "HR"
-    },
-    {
-      ticketNumber: "TK-2024-003",
-      title: "Printer malfunction in Finance dept",
-      priority: "Low", 
-      status: "Resolved",
-      assignee: "Mike Johnson",
-      createdDate: "2024-01-13",
-      department: "Finance"
-    }
-  ]);
+  const list = TicketsStore.getAll();
+  const stats = {
+    total: list.length,
+    open: list.filter(t => t.status === 'Open').length,
+    inProgress: list.filter(t => t.status === 'In Progress').length,
+    resolved: list.filter(t => t.status === 'Resolved').length,
+    closed: list.filter(t => t.status === 'Closed').length,
+  };
+  const tickets = list.slice(0, 10).map(t => ({
+    ticketNumber: t.ticketNumber,
+    title: t.title,
+    priority: t.priority,
+    status: t.status,
+    assignee: t.assigneeEmpID || '-',
+    createdDate: t.createdAt.slice(0,10),
+    department: t.department || '-'
+  }));
 
   const navigate = useNavigate();
 

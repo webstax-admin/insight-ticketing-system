@@ -15,11 +15,7 @@ interface Company {
 }
 
 export default function Companies() {
-  const [companies, setCompanies] = useState<Company[]>([
-    { companyCode: "TECH", companyShortName: "TechCorp", companyName: "Technology Corporation Ltd." },
-    { companyCode: "HEALTH", companyShortName: "HealthSys", companyName: "Healthcare Systems Inc." },
-    { companyCode: "FIN", companyShortName: "FinServ", companyName: "Financial Services Group" },
-  ]);
+  const [companies, setCompanies] = useState<Company[]>(() => Masters.getCompanies());
   
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,9 +56,11 @@ export default function Companies() {
 
     if (editingCompany) {
       // Update existing company
-      setCompanies(prev => prev.map(company => 
+      const updated = companies.map(company => 
         company.companyCode === editingCompany.companyCode ? formData : company
-      ));
+      );
+      setCompanies(updated);
+      Masters.setCompanies(updated);
       toast({
         title: "Success",
         description: "Company updated successfully"
@@ -77,7 +75,9 @@ export default function Companies() {
         });
         return;
       }
-      setCompanies(prev => [...prev, formData]);
+      const updated = [...companies, formData];
+      setCompanies(updated);
+      Masters.setCompanies(updated);
       toast({
         title: "Success",
         description: "Company added successfully"
@@ -89,7 +89,9 @@ export default function Companies() {
   };
 
   const handleDelete = (companyCode: string) => {
-    setCompanies(prev => prev.filter(company => company.companyCode !== companyCode));
+    const updated = companies.filter(company => company.companyCode !== companyCode);
+    setCompanies(updated);
+    Masters.setCompanies(updated);
     toast({
       title: "Success",
       description: "Company deleted successfully"

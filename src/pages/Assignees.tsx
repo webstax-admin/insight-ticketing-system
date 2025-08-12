@@ -23,30 +23,7 @@ interface AssigneeMapping {
 }
 
 export default function Assignees() {
-  const [mappings, setMappings] = useState<AssigneeMapping[]>([
-    {
-      mappingID: "MAP001",
-      empLocation: "Building A",
-      department: "IT",
-      subDept: "Network",
-      subTask: "Connectivity",
-      taskLabel: "Network Setup",
-      ticketType: "Hardware",
-      assigneeEmpID: "EMP001",
-      isDisplay: true
-    },
-    {
-      mappingID: "MAP002",
-      empLocation: "Building B", 
-      department: "IT",
-      subDept: "Software",
-      subTask: "Installation",
-      taskLabel: "Software Install",
-      ticketType: "Software",
-      assigneeEmpID: "EMP002",
-      isDisplay: true
-    },
-  ]);
+  const [mappings, setMappings] = useState<AssigneeMapping[]>(() => Masters.getAssigneeMappings());
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,12 +40,12 @@ export default function Assignees() {
     isDisplay: true
   });
 
-  const locations = ["Building A", "Building B", "Building C", "Remote"];
-  const departments = ["IT", "HR", "Finance", "Operations"];
-  const subDepartments = ["Network", "Hardware", "Software", "Security"];
-  const subTasks = ["Installation", "Maintenance", "Troubleshooting", "Upgrade"];
-  const taskLabels = ["Network Setup", "Software Install", "Hardware Repair", "Security Audit"];
-  const ticketTypes = ["Hardware", "Software", "Network", "Security"];
+  const locations = Masters.getLocations().map(l => l.locationName);
+  const departments = ["IT", "Administration", "HR", "Finance", "Operations"];
+  const subDepartments = ["Network", "Hardware", "Software", "Security", "Transport", "Services"];
+  const subTasks = ["Installation", "Maintenance", "Troubleshooting", "Upgrade", "General", "Vehicle"];
+  const taskLabels = Masters.getCategories().map(c => c.categoryName).concat(["Vehicle", "Admin Service"]);
+  const ticketTypes = ["IT", "Vehicle", "Admin"];
   const employees = [
     { id: "EMP001", name: "John Smith" },
     { id: "EMP002", name: "Jane Doe" },
@@ -114,10 +91,12 @@ export default function Assignees() {
       return;
     }
 
-    if (editingMapping) {
-      setMappings(prev => prev.map(mapping => 
-        mapping.mappingID === editingMapping.mappingID ? formData : mapping
-      ));
+  if (editingMapping) {
+      const updated = mappings.map(mapping => 
+        mapping.mappingID === editingMapping.mappingID ? formData as any : mapping
+      );
+      setMappings(updated);
+      Masters.setAssigneeMappings(updated);
       toast({
         title: "Success",
         description: "Assignee mapping updated successfully"
@@ -131,7 +110,9 @@ export default function Assignees() {
         });
         return;
       }
-      setMappings(prev => [...prev, formData]);
+      const updated = [...mappings, formData as any];
+      setMappings(updated);
+      Masters.setAssigneeMappings(updated);
       toast({
         title: "Success",
         description: "Assignee mapping added successfully"
@@ -142,7 +123,9 @@ export default function Assignees() {
   };
 
   const handleDelete = (mappingID: string) => {
-    setMappings(prev => prev.filter(mapping => mapping.mappingID !== mappingID));
+    const updated = mappings.filter(mapping => mapping.mappingID !== mappingID);
+    setMappings(updated);
+    Masters.setAssigneeMappings(updated);
     toast({
       title: "Success",
       description: "Assignee mapping deleted successfully"

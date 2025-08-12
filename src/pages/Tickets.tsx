@@ -17,6 +17,7 @@ import {
   User
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { TicketsStore } from "@/lib/store";
 
 interface Ticket {
   ticketNumber: string;
@@ -33,56 +34,21 @@ interface Ticket {
 
 export default function Tickets() {
   const [activeTab, setActiveTab] = useState('all');
-  const [tickets, setTickets] = useState<Ticket[]>([
-    {
-      ticketNumber: "TK-2024-001",
-      title: "Network connectivity issue in Building A",
-      priority: "High",
-      status: "In Progress",
-      assignee: "John Smith",
-      reporter: "Alice Johnson",
-      createdDate: "2024-01-15",
-      department: "IT",
-      location: "Building A",
-      expectedCompletion: "2024-01-20"
-    },
-    {
-      ticketNumber: "TK-2024-002", 
-      title: "Software installation request for accounting team",
-      priority: "Medium",
-      status: "Open",
-      assignee: "Jane Doe",
-      reporter: "Bob Wilson",
-      createdDate: "2024-01-14",
-      department: "Finance",
-      location: "Building B",
-      expectedCompletion: "2024-01-18"
-    },
-    {
-      ticketNumber: "TK-2024-003",
-      title: "Printer malfunction in HR department",
-      priority: "Low", 
-      status: "Resolved",
-      assignee: "Mike Johnson",
-      reporter: "Sarah Davis",
-      createdDate: "2024-01-13",
-      department: "HR",
-      location: "Building A",
-      expectedCompletion: "2024-01-17"
-    },
-    {
-      ticketNumber: "TK-2024-004",
-      title: "Security system upgrade required",
-      priority: "Critical",
-      status: "Open",
-      assignee: "Sarah Wilson",
-      reporter: "Tom Brown",
-      createdDate: "2024-01-12",
-      department: "Security",
-      location: "Building C",
-      expectedCompletion: "2024-01-19"
-    }
-  ]);
+  const [tickets, setTickets] = useState<Ticket[]>(() => {
+    const list = TicketsStore.getAll();
+    return list.map(t => ({
+      ticketNumber: t.ticketNumber,
+      title: t.title,
+      priority: t.priority,
+      status: t.status,
+      assignee: t.assigneeEmpID || '-',
+      reporter: t.reporterEmail,
+      createdDate: t.createdAt.slice(0,10),
+      department: t.department || '-',
+      location: t.location || '-',
+      expectedCompletion: t.expectedCompletion || ''
+    }));
+  });
 
   const [filters, setFilters] = useState({
     status: '',

@@ -16,18 +16,9 @@ interface Location {
 }
 
 export default function Locations() {
-  const [locations, setLocations] = useState<Location[]>([
-    { locationID: "LOC001", companyCode: "TECH", locationName: "Building A - Tech Campus" },
-    { locationID: "LOC002", companyCode: "TECH", locationName: "Building B - Research Center" },
-    { locationID: "LOC003", companyCode: "HEALTH", locationName: "Main Hospital" },
-    { locationID: "LOC004", companyCode: "FIN", locationName: "Financial Plaza" },
-  ]);
+  const [locations, setLocations] = useState<Location[]>(() => Masters.getLocations());
 
-  const companies = [
-    { code: "TECH", name: "TechCorp" },
-    { code: "HEALTH", name: "HealthSys" },
-    { code: "FIN", name: "FinServ" },
-  ];
+  const companies = Masters.getCompanies().map(c => ({ code: c.companyCode, name: c.companyShortName || c.companyName }));
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -69,9 +60,11 @@ export default function Locations() {
     }
 
     if (editingLocation) {
-      setLocations(prev => prev.map(location => 
+      const updated = locations.map(location => 
         location.locationID === editingLocation.locationID ? formData : location
-      ));
+      );
+      setLocations(updated);
+      Masters.setLocations(updated);
       toast({
         title: "Success",
         description: "Location updated successfully"
@@ -85,7 +78,9 @@ export default function Locations() {
         });
         return;
       }
-      setLocations(prev => [...prev, formData]);
+      const updated = [...locations, formData];
+      setLocations(updated);
+      Masters.setLocations(updated);
       toast({
         title: "Success",
         description: "Location added successfully"
@@ -97,7 +92,9 @@ export default function Locations() {
   };
 
   const handleDelete = (locationID: string) => {
-    setLocations(prev => prev.filter(location => location.locationID !== locationID));
+    const updated = locations.filter(location => location.locationID !== locationID);
+    setLocations(updated);
+    Masters.setLocations(updated);
     toast({
       title: "Success",
       description: "Location deleted successfully"

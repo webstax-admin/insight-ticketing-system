@@ -20,21 +20,9 @@ interface Subcategory {
 }
 
 export default function Categories() {
-  const [categories, setCategories] = useState<Category[]>([
-    { categoryID: "CAT001", categoryName: "Hardware Issues" },
-    { categoryID: "CAT002", categoryName: "Software Problems" },
-    { categoryID: "CAT003", categoryName: "Network Issues" },
-    { categoryID: "CAT004", categoryName: "Security Incidents" },
-  ]);
+  const [categories, setCategories] = useState<Category[]>(() => Masters.getCategories());
 
-  const [subcategories, setSubcategories] = useState<Subcategory[]>([
-    { subcategoryID: "SUB001", categoryID: "CAT001", subcategoryName: "Computer Hardware" },
-    { subcategoryID: "SUB002", categoryID: "CAT001", subcategoryName: "Printer Issues" },
-    { subcategoryID: "SUB003", categoryID: "CAT002", subcategoryName: "Application Errors" },
-    { subcategoryID: "SUB004", categoryID: "CAT002", subcategoryName: "Operating System" },
-    { subcategoryID: "SUB005", categoryID: "CAT003", subcategoryName: "Connectivity" },
-    { subcategoryID: "SUB006", categoryID: "CAT003", subcategoryName: "WiFi Problems" },
-  ]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>(() => Masters.getSubcategories());
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,9 +64,11 @@ export default function Categories() {
     }
 
     if (editingCategory) {
-      setCategories(prev => prev.map(cat => 
+      const updated = categories.map(cat => 
         cat.categoryID === editingCategory.categoryID ? categoryFormData : cat
-      ));
+      );
+      setCategories(updated);
+      Masters.setCategories(updated);
       toast({ title: "Success", description: "Category updated successfully" });
     } else {
       if (categories.some(c => c.categoryID === categoryFormData.categoryID)) {
@@ -89,7 +79,9 @@ export default function Categories() {
         });
         return;
       }
-      setCategories(prev => [...prev, categoryFormData]);
+      const updated = [...categories, categoryFormData];
+      setCategories(updated);
+      Masters.setCategories(updated);
       toast({ title: "Success", description: "Category added successfully" });
     }
     
@@ -108,7 +100,9 @@ export default function Categories() {
       return;
     }
     
-    setCategories(prev => prev.filter(cat => cat.categoryID !== categoryID));
+    const updated = categories.filter(cat => cat.categoryID !== categoryID);
+    setCategories(updated);
+    Masters.setCategories(updated);
     toast({ title: "Success", description: "Category deleted successfully" });
   };
 
@@ -143,9 +137,11 @@ export default function Categories() {
     }
 
     if (editingSubcategory) {
-      setSubcategories(prev => prev.map(sub => 
+      const updated = subcategories.map(sub => 
         sub.subcategoryID === editingSubcategory.subcategoryID ? subcategoryFormData : sub
-      ));
+      );
+      setSubcategories(updated);
+      Masters.setSubcategories(updated);
       toast({ title: "Success", description: "Subcategory updated successfully" });
     } else {
       if (subcategories.some(s => s.subcategoryID === subcategoryFormData.subcategoryID)) {
@@ -156,7 +152,9 @@ export default function Categories() {
         });
         return;
       }
-      setSubcategories(prev => [...prev, subcategoryFormData]);
+      const updated = [...subcategories, subcategoryFormData];
+      setSubcategories(updated);
+      Masters.setSubcategories(updated);
       toast({ title: "Success", description: "Subcategory added successfully" });
     }
     
@@ -164,7 +162,9 @@ export default function Categories() {
   };
 
   const handleDeleteSubcategory = (subcategoryID: string) => {
-    setSubcategories(prev => prev.filter(sub => sub.subcategoryID !== subcategoryID));
+    const updated = subcategories.filter(sub => sub.subcategoryID !== subcategoryID);
+    setSubcategories(updated);
+    Masters.setSubcategories(updated);
     toast({ title: "Success", description: "Subcategory deleted successfully" });
   };
 

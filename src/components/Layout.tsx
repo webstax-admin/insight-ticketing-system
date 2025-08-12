@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { LogOut, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { seedDefaults } from "@/lib/store";
 
 export const Layout = () => {
   const location = useLocation();
@@ -12,8 +13,9 @@ export const Layout = () => {
   const [user, setUser] = useState({ name: "John Doe", role: "IT Admin" });
   const [notifications, setNotifications] = useState(3);
 
-  // Check if user is authenticated
+  // Seed defaults once and check if user is authenticated
   useEffect(() => {
+    seedDefaults();
     const empID = localStorage.getItem('empID');
     if (!empID && location.pathname !== '/login') {
       navigate('/login');
@@ -42,7 +44,7 @@ export const Layout = () => {
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <h1 className="text-xl font-semibold text-foreground">
-                IT Ticketing System
+                SPOT: Smart Processing of Tickets
               </h1>
             </div>
             

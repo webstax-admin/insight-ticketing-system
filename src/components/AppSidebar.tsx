@@ -33,9 +33,11 @@ const navigation = [
     ]
   },
   {
-    title: "Tickets",
+    title: "Requests",
     items: [
-      { title: "Create Ticket", url: "/create-ticket", icon: Plus },
+      { title: "Create IT Ticket", url: "/create-it-ticket", icon: Plus },
+      { title: "Vehicle Requisition", url: "/vehicle-requisition", icon: Ticket },
+      { title: "Admin Service Request", url: "/admin-service-request", icon: Ticket },
       { title: "My Tickets", url: "/tickets", icon: Ticket },
     ]
   },
