@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,27 +22,33 @@ import {
   Tag, 
   UserCheck, 
   Bell,
-  Settings
+  Settings,
+  Car,
+  ClipboardList
 } from "lucide-react";
 
-const navigation = [
-  {
-    title: "Dashboard",
-    items: [
-      { title: "Overview", url: "/", icon: Home },
-      { title: "Analytics", url: "/analytics", icon: BarChart3 },
-    ]
-  },
-  {
-    title: "Requests",
-    items: [
-      { title: "Create IT Ticket", url: "/create-it-ticket", icon: Plus },
-      { title: "Vehicle Requisition", url: "/vehicle-requisition", icon: Ticket },
-      { title: "Admin Service Request", url: "/admin-service-request", icon: Ticket },
-      { title: "My Tickets", url: "/tickets", icon: Ticket },
-    ]
-  },
-  {
+// Navigation based on user roles
+const getNavigationForRole = (userRole: string) => {
+  const commonNav = [
+    {
+      title: "Dashboard",
+      items: [
+        { title: "Overview", url: "/", icon: Home },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
+      ]
+    },
+    {
+      title: "Requests",
+      items: [
+        { title: "Create IT Ticket", url: "/create-it-ticket", icon: Plus },
+        { title: "Vehicle Requisition", url: "/vehicle-requisition", icon: Car },
+        { title: "Admin Service Request", url: "/admin-service-request", icon: ClipboardList },
+        { title: "My Tickets", url: "/tickets", icon: Ticket },
+      ]
+    }
+  ];
+
+  const masterDataNav = {
     title: "Master Data",
     items: [
       { title: "Companies", url: "/companies", icon: Building },
@@ -50,19 +57,36 @@ const navigation = [
       { title: "Assignees", url: "/assignees", icon: UserCheck },
       { title: "HOD Management", url: "/hod", icon: Settings },
     ]
-  },
-  {
+  };
+
+  const organizationNav = {
     title: "Organization",
     items: [
       { title: "IT Org Chart", url: "/org-chart", icon: Users },
       { title: "Notifications", url: "/notifications", icon: Bell },
     ]
+  };
+
+  if (userRole === 'hod') {
+    // HODs see everything
+    return [...commonNav, masterDataNav, organizationNav];
+  } else {
+    // Common users see only dashboard and requests
+    return commonNav;
   }
-];
+};
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
+  const [userRole, setUserRole] = useState<string>('user');
+  const [navigation, setNavigation] = useState(getNavigationForRole('user'));
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole') || 'user';
+    setUserRole(role);
+    setNavigation(getNavigationForRole(role));
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 

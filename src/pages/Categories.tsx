@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Plus, Edit, Trash2, Search, Tag, FolderOpen } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Masters } from "@/lib/store";
 
 interface Category {
   categoryID: string;

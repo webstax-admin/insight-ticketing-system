@@ -90,7 +90,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">IT Ticketing System</CardTitle>
+          <CardTitle className="text-2xl font-bold">SPOT: Smart Processing of Tickets</CardTitle>
           <CardDescription>
             {step === 'email' ? 'Enter your email to receive OTP' : 'Enter the OTP sent to your email'}
           </CardDescription>
@@ -109,6 +109,38 @@ export default function Login() {
                   onKeyPress={(e) => e.key === 'Enter' && handleSendOtp()}
                 />
               </div>
+              
+              {/* Quick Login Options */}
+              <div className="border-t pt-4 space-y-2">
+                <p className="text-sm text-muted-foreground text-center">Quick Login for Testing</p>
+                <div className="grid grid-cols-1 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => { setEmail('admin@pel.com'); handleSendOtp(); }}
+                    className="text-xs"
+                  >
+                    Admin/HOD (Vehicle & Admin)
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => { setEmail('it@pel.com'); handleSendOtp(); }}
+                    className="text-xs"
+                  >
+                    IT HOD
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => { setEmail('user@pel.com'); handleSendOtp(); }}
+                    className="text-xs"
+                  >
+                    Common User
+                  </Button>
+                </div>
+              </div>
+              
               <Button 
                 onClick={handleSendOtp} 
                 className="w-full" 
